@@ -1,0 +1,16 @@
+npm i --save class-validator class-transformer express-rate-limit @nestjs/config argon2
+npm install prisma --save-dev
+npm install @nestjs/jwt @nestjs/passport passport passport-jwt
+npm install --save-dev @types/passport-jwt
+npm install --save @nestjs-modules/mailer nodemailer
+npm install --save-dev @types/nodemailer
+npm i --save-dev @types/multer
+npm install @aws-sdk/client-s3
+npm install cache-manager ioredis cache-manager-ioredis-yet
+
+
+
+
+--------->update version<---------
+npm i -g npm-check-updates
+ncu -u -f /^@nestjs/

@@ -1,0 +1,30 @@
+import { useEffect, useState } from "react";
+import { product } from "../interfaces";
+import { productService } from "../services/productService";
+
+export const useProductData = () => {
+  const [products, setProducts] = useState<product[]>([]);
+  const fetchProducts = async () => {
+    try {
+      const response = await productService.findAll();
+      const productList: product[] = response.data.data.map((item: any) => ({
+        id: item.id,
+        name: item.name,
+        desc: item.description,
+        price: item.price,
+        stock: item.stock,
+        imagePath: JSON.parse(item.imagePath),
+      }));
+
+      setProducts(productList);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  return { products };
+};

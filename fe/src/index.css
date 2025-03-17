@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+body {
+  font-family: "Fira Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@theme {
+  --animate-fade-in: fade-in 0.5s ease-in-out;
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 100;
+    }
+  }
+}
+
+@theme {
+  --animate-slideDown: slideDown 0.5s ease-out;
+  @keyframes slideDown {
+    from {
+      max-height: 0;
+      opacity: 0;
+    }
+    to {
+      max-height: 300px;
+      opacity: 1;
+    }
+  }
+}
+
+@theme {
+  --animate-slideUp: slideUp 0.5s ease-in;
+  @keyframes slideUp {
+    from {
+      max-height: 300px;
+      opacity: 1;
+    }
+    to {
+      max-height: 0;
+      opacity: 0;
+    }
+  }
+}
+
+@theme {
+  --animate-underline: underline 0.5s ease-out;
+  @keyframes underline {
+    0% {
+      opacity: 0
+    }
+  }
+}
+
+.tooltip {
+  @apply invisible absolute;
+}
+
+.has-tooltip:hover .tooltip {
+  @apply visible z-50;
+}

@@ -1,0 +1,5 @@
+white-list: This typically refers to a list of allowed items, such as IP addresses, email addresses, or other identifiers. In NestJS, you might use a whitelist to restrict access to certain routes or services.
+
+forbidNonWhitelisted: This could be a setting that ensures only items on the whitelist are allowed, and all others are forbidden. In NestJS, this might be used in conjunction with validation pipes or guards to enforce strict access control.
+
+transform: This usually refers to the process of converting data from one format to another. In NestJS, you might use transformation to sanitize or format incoming request data before processing it.
