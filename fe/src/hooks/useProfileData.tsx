@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { authService } from "../services/authService";
 import { profile } from "../interfaces";
+import toast from "react-hot-toast";
 
 export const useProfileData = () => {
   const [formData, setFormData] = useState<profile>();
@@ -55,7 +56,7 @@ export const useProfileData = () => {
       setUpdateFormData(fetchedData);
       setIsGoogleLogin(response.data.data.googleId);
     } catch (error) {
-      console.error("Error fetching personal data:", error);
+      toast.error(`Error fetching personal data: ${String(error)}`);
     }
   };
 

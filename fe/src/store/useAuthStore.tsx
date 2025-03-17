@@ -1,17 +1,19 @@
 import { create } from "zustand";
 import { authService } from "../services/authService";
 import toast from "react-hot-toast";
+import { AuthResponse, IUserSignup, User } from "../interfaces";
+import { AxiosError } from "axios";
 
 interface AuthState {
-  user: any;
+  user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  signup: (formData: any) => Promise<any>;
-  login: (email: string, password: string) => Promise<any>;
+  signup: (formData: IUserSignup) => Promise<AuthResponse | void>;
+  login: (email: string, password: string) => Promise<AuthResponse | void>;
   logout: () => Promise<void>;
-  profile: () => Promise<any>;
+  profile: () => Promise<unknown>;
   checkAuth: () => Promise<void>;
-  ggLogin: (credentialResponse: any) => Promise<any>;
+  ggLogin: (credentialResponse: unknown) => Promise<string | void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -22,17 +24,18 @@ export const useAuthStore = create<AuthState>((set) => ({
   signup: async (formData) => {
     set({ isLoading: true });
     try {
-      const response = await authService.signup(formData);
+      const response = (await authService.signup(formData)) as AuthResponse;
       set({
         user: response.data.data,
         isLoading: false,
       });
       toast.success(response.data.message);
       return response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       set({ isLoading: false });
-      toast.error(error.response.data.message);
-      console.error("Signup error", error.response?.data || error.message);
+      if (error instanceof AxiosError && error.message) {
+        toast.error(error.response?.data.message);
+      }
     }
   },
 
@@ -48,10 +51,11 @@ export const useAuthStore = create<AuthState>((set) => ({
       });
 
       return response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       set({ isLoading: false });
-      toast.error(error.response.data.message);
-      console.error("Login error", error.response?.data || error.message);
+      if (error instanceof AxiosError && error.message) {
+        toast.error(error.response?.data.message);
+      }
     }
   },
   logout: async () => {
@@ -65,9 +69,11 @@ export const useAuthStore = create<AuthState>((set) => ({
       });
       toast.success("Logout successfully");
       window.location.href = "/login";
-    } catch (error: any) {
+    } catch (error: unknown) {
       set({ isLoading: false });
-      console.error("Logout error", error.response?.data || error.message);
+      if (error instanceof AxiosError && error.response) {
+        toast.error(error.response?.data || error.message);
+      }
     }
   },
 
@@ -100,12 +106,12 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  ggLogin: async (crendentialResponse: any) => {
+  ggLogin: async (crendentialResponse: unknown) => {
     set({ isLoading: true });
     try {
       const response = await authService.ggLogin(crendentialResponse);
       toast.success(response.data);
-      set({ user: true, isAuthenticated: true, isLoading: false });
+      set({ isAuthenticated: true, isLoading: false });
     } catch (error) {
       set({ isLoading: false, isAuthenticated: false });
     }

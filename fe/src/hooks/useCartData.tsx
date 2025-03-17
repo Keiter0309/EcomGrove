@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { CartDetails } from "../interfaces/cart";
 import { useAuthStore } from "../store/useAuthStore";
 import { cartService } from "../services/cartService";
+import toast from "react-hot-toast";
 
 export default function useCartData() {
   const [loading, setLoading] = useState(true);
@@ -50,7 +51,7 @@ export default function useCartData() {
           const localCart = localStorage.getItem("cart");
           cartData = localCart ? JSON.parse(localCart) : [];
         } catch (storageError) {
-          console.error("Error parsing local cart:", storageError);
+          toast.error(String(storageError))
           cartData = [];
         }
       }

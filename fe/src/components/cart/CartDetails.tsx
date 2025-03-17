@@ -1,28 +1,45 @@
 import { Minus, Plus, Trash } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useCartData from "../../hooks/useCartData";
 
 export default function CartDetails() {
   const { cart } = useCartData();
-  const pricePerItem = 1299;
-  const [quantity, setQuantity] = useState<number>(1);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
+
+  useEffect(() => {
+    if (cart.length > 0) {
+      const initialQuantities: { [key: string]: number } = {};
+      cart.forEach((item) => {
+        initialQuantities[Number(item.cart.id)] = item.cart.quantity || 1;
+      });
+      setQuantities(initialQuantities);
+    }
+  }, [cart]);
+
+  const handleInputChange = (
+    id: string,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const value = Number(e.target.value);
     if (value >= 1 && value <= 50) {
-      setQuantity(value);
+      setQuantities((prev) => ({ ...prev, [id]: value }));
     }
   };
 
-  const handleQuantityChange = (action: "increase" | "decrease") => {
-    if (action === "increase" && quantity < 50 ) {
-      setQuantity(quantity + 1);
-    } else if (action === "decrease" && quantity > 1) {
-      setQuantity(quantity - 1);
-    }
+  const handleQuantityChange = (
+    id: string,
+    action: "increase" | "decrease"
+  ) => {
+    setQuantities((prev) => {
+      if (prev[id] === undefined) return prev;
+      const newQuantity =
+        action === "increase"
+          ? Math.min(prev[id] + 1)
+          : Math.max(prev[id] - 1, 1);
+      return { ...prev, [id]: newQuantity };
+    });
   };
-
-  const totalPrice = quantity * pricePerItem;
 
   return (
     <div className="py-8 px-10 max-w-7xl mx-auto">
@@ -34,7 +51,10 @@ export default function CartDetails() {
         {/* Left section - Product List */}
         <div className="col-span-1 md:col-span-2 space-y-4">
           {cart.map((item) => (
-            <div className="col-span-2 border border-gray-300 rounded-lg p-5 shadow-sm bg-white" key={item.cart.id}>
+            <div
+              className="col-span-2 border border-gray-300 rounded-lg p-5 shadow-sm bg-white"
+              key={item.cart.id}
+            >
               <div className="flex gap-6 items-center">
                 {/* Product Image */}
                 <div className="h-32 w-32 flex-shrink-0 border border-gray-300 rounded-lg overflow-hidden">
@@ -65,9 +85,11 @@ export default function CartDetails() {
                     <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
                       {/* Decrease Button */}
                       <button
-                        onClick={() => handleQuantityChange("decrease")}
+                        onClick={() =>
+                          handleQuantityChange(String(item.cart.id), "decrease")
+                        }
                         className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 transition-all disabled:opacity-50"
-                        disabled={quantity <= 1}
+                        disabled={quantities[String(item.cart.id)] <= 1}
                       >
                         <Minus size={16} />
                       </button>
@@ -75,18 +97,26 @@ export default function CartDetails() {
                       {/* Quantity Input */}
                       <input
                         className="w-14 text-center text-gray-900 font-semibold border-x border-gray-300 py-2 outline-none"
-                        onChange={handleInputChange}
-                        value={quantity}
-                        type="string"
+                        onChange={(e) =>
+                          handleInputChange(String(item.cart.id), e)
+                        }
+                        value={
+                          quantities[String(item.cart.id)] ?? item.cart.quantity
+                        } // Fallback to cart quantity
+                        type="number"
                         min="1"
                         max="50"
                       />
 
                       {/* Increase Button */}
                       <button
-                        onClick={() => handleQuantityChange("increase")}
+                        onClick={() =>
+                          handleQuantityChange(String(item.cart.id), "increase")
+                        }
                         className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 transition-all disabled:opacity-50"
-                        disabled={quantity >= item.product.stock}
+                        disabled={
+                          quantities[String(item.cart.id)] >= item.product.stock
+                        }
                       >
                         <Plus size={16} />
                       </button>
@@ -111,7 +141,19 @@ export default function CartDetails() {
             </h2>
             <div className="flex justify-between text-gray-700">
               <span>Subtotal</span>
-              <span>${totalPrice.toLocaleString()} USD</span>
+              <span>
+                $
+                {cart
+                  .reduce(
+                    (total, item) =>
+                      total +
+                      (quantities[Number(item.cart.id)] ?? item.cart.quantity) *
+                        Number(item.product.price),
+                    0
+                  )
+                  .toLocaleString()}{" "}
+                USD
+              </span>
             </div>
             <div className="flex justify-between text-gray-700 mt-2">
               <span>Shipping</span>
@@ -120,7 +162,19 @@ export default function CartDetails() {
             <hr className="my-4 border-gray-300" />
             <div className="flex justify-between text-gray-900 font-semibold">
               <span>Total</span>
-              <span>${totalPrice.toLocaleString()} USD</span>
+              <span>
+                $
+                {cart
+                  .reduce(
+                    (total, item) =>
+                      total +
+                      (quantities[Number(item.cart.id)] ?? item.cart.quantity) *
+                        Number(item.product.price),
+                    0
+                  )
+                  .toLocaleString()}{" "}
+                USD
+              </span>
             </div>
             <button className="mt-5 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition">
               Checkout

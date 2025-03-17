@@ -9,3 +9,4 @@ export * from "./message";
 export * from "./about";
 export * from './profile'
 export * from './modal'
+export * from './auth'

@@ -125,7 +125,7 @@ npm run dev
 ### **Start Backend**
 ```bash
 cd be
-npm start
+npm run dev
 ```
 
 ## Development Notes
