@@ -6,13 +6,12 @@ import {
   Req,
   Get,
   UseGuards,
-  Next,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { Helper } from 'src/utils/helper';
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { ForgotDto } from './dto/forgot.dto';
 import { ResetPasswordDto } from './dto/reset.dto';

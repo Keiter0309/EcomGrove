@@ -76,7 +76,7 @@ export class OrdersService {
       });
     } catch (err: any) {
       console.error('Error while creating new orders:', err);
-      throw new InternalServerErrorException('Failed to create orders');
+      throw new InternalServerErrorException();
     }
   }
 
@@ -102,7 +102,7 @@ export class OrdersService {
       };
     } catch (err: any) {
       console.error('Error while fetching all orders data', err.message);
-      throw new InternalServerErrorException('Failed to fetch all orders data');
+      throw new InternalServerErrorException();
     }
   }
 
@@ -123,7 +123,7 @@ export class OrdersService {
       };
     } catch (err: any) {
       console.error('Error while fetching the order', err.message);
-      throw new InternalServerErrorException('Failed to fetch the order');
+      throw new InternalServerErrorException();
     }
   }
 
@@ -133,7 +133,7 @@ export class OrdersService {
     });
 
     if (!order) {
-      throw new NotFoundException('Order not found');
+      throw new NotFoundException();
     }
 
     if (order.userId !== userId) {
