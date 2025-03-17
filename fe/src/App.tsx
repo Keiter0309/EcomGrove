@@ -11,11 +11,11 @@ import { useEffect } from "react";
 import Profile from "./pages/Profile";
 import ProductDetails from "./components/product/ProductDetails";
 import CartDetails from "./components/cart/CartDetails";
+import Checkout from "./pages/Checkout";
 
 function App() {
   const checkAuth = useAuthStore((state) => state.checkAuth);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  
 
   useEffect(() => {
     checkAuth();
@@ -39,6 +39,7 @@ function App() {
       />
       <Route path={`/product/:id`} element={<ProductDetails />} />
       <Route path="/cart-details" element={<CartDetails />} />
+      <Route path="/checkout" element={<Checkout />} />
     </Routes>
   );
 }
