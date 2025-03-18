@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { navItems } from "../../utils";
 import { useAuthStore } from "../../store/useAuthStore";
 import Loading from "./Loading";
-import Cart from "../cart/Cart";
+import Cart from "../../pages/cart/Cart";
 
 export default function Header() {
   const [isOpened, setIsOpened] = useState(false);

@@ -1,12 +1,12 @@
-import { ETypes } from "../enums/ETypes";
-import { EURI } from "../enums/EURI";
 import toast, { Toaster } from "react-hot-toast";
-import "../styles/global-style.css";
-import { useAuthStore } from "../store/useAuthStore";
+import "../../styles/global-style.css";
 import { SubmitHandler, useForm } from "react-hook-form";
-import Header from "../components/common/Header";
 import { useNavigate } from "react-router-dom";
-import Loading from "../components/common/Loading";
+import { useAuthStore } from "../../store/useAuthStore";
+import Loading from "../../components/common/Loading";
+import { EURI } from "../../enums/EURI";
+import { ETypes } from "../../enums/ETypes";
+import Header from "../../components/common/Header";
 
 type FormValues = {
   firstName: string;

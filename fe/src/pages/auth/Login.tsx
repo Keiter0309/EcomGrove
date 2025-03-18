@@ -1,10 +1,10 @@
 import { Toaster } from "react-hot-toast";
-import bg from "../assets/bg.jpg";
-import { useAuthStore } from "../store/useAuthStore";
+import bg from '../../assets/bg.jpg'
 import { useForm, SubmitHandler } from "react-hook-form";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
-import BackToHome from "../components/common/BackToHome";
-import Loading from "../components/common/Loading";
+import { useAuthStore } from "../../store/useAuthStore";
+import BackToHome from "../../components/common/BackToHome";
+import Loading from "../../components/common/Loading";
 
 type FormValues = {
   email: string;
