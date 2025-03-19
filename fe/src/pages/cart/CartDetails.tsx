@@ -1,6 +1,7 @@
 import { Minus, Plus, Trash } from "lucide-react";
 import { useState, useEffect } from "react";
 import useCartData from "../../hooks/useCartData";
+import Checkout from "../../components/shop/Checkout";
 
 export default function CartDetails() {
   const { cart } = useCartData();
@@ -176,8 +177,8 @@ export default function CartDetails() {
                 USD
               </span>
             </div>
-            <button className="mt-5 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition">
-              Checkout
+            <button className="mt-5 w-full">
+              <Checkout/>
             </button>
           </div>
         </div>

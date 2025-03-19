@@ -8,7 +8,6 @@ import { useAuthStore } from "./store/useAuthStore";
 import { useEffect } from "react";
 import Profile from "./pages/Profile";
 import ProductDetails from "./components/product/ProductDetails";
-import Checkout from "./pages/shop/Checkout";
 import CartDetails from "./pages/cart/CartDetails";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
@@ -39,7 +38,6 @@ function App() {
       />
       <Route path={`/product/:id`} element={<ProductDetails />} />
       <Route path="/cart-details" element={<CartDetails />} />
-      <Route path="/checkout" element={<Checkout />} />
     </Routes>
   );
 }
