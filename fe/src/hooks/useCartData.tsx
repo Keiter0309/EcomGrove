@@ -24,12 +24,18 @@ export default function useCartData() {
         desc: item.product?.description ?? "",
         price: Number(item.product?.price ?? item.price ?? 0),
         stock: item.product?.stock ?? 0,
-        imagePath:
-          Array.isArray(item.product?.imagePath) 
-            ? item.product.imagePath
-            : (typeof item.product?.imagePath === "string"
-                ? JSON.parse(item.product.imagePath)
-                : []),
+        imagePath: Array.isArray(item.product?.imagePath)
+          ? item.product.imagePath
+          : typeof item.product?.imagePath === "string"
+          ? JSON.parse(item.product.imagePath)
+          : [],
+      },
+      user: {
+        id: item.user.id ?? "",
+        firstName: item.user.firstName ?? "",
+        lastName: item.user.lastName ?? "",
+        email: item.user.email ?? "",
+        username: item.user.username ?? "",
       },
     }));
   };
@@ -51,12 +57,13 @@ export default function useCartData() {
           const localCart = localStorage.getItem("cart");
           cartData = localCart ? JSON.parse(localCart) : [];
         } catch (storageError) {
-          toast.error(String(storageError))
+          toast.error(String(storageError));
           cartData = [];
         }
       }
 
       setCart(transformCartData(cartData));
+      console.log(transformCartData(cartData))
     } catch (err) {
       console.error("Error fetching cart data:", err);
       setError("Failed to load cart data. Please try again.");
@@ -67,7 +74,6 @@ export default function useCartData() {
 
   useEffect(() => {
     fetchCartData();
-  }, [isAuthenticated]); 
+  }, [isAuthenticated]);
   return { cart, setCart, loading, error, transformCartData, fetchCartData };
 }
-

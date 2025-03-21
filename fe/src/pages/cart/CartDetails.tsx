@@ -58,7 +58,7 @@ export default function CartDetails() {
             >
               <div className="flex gap-6 items-center">
                 {/* Product Image */}
-                <div className="h-32 w-32 flex-shrink-0 border border-gray-300 rounded-lg overflow-hidden">
+                  <div className="h-32 w-32 flex-shrink-0 border border-gray-300 rounded-lg overflow-hidden">
                   <img
                     src={item.product.imagePath[0]?.url}
                     alt={item.product.name}

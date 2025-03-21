@@ -1,26 +1,78 @@
-import { Injectable } from '@nestjs/common';
-import { CreatePaymentDto } from './dto/create-payment.dto';
-import { UpdatePaymentDto } from './dto/update-payment.dto';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import axios from 'axios';
 
 @Injectable()
 export class PaymentsService {
-  create(createPaymentDto: CreatePaymentDto) {
-    return 'This action adds a new payment';
+  private readonly clientId = process.env.PAYPAL_CLIENT_ID;
+  private readonly secret = process.env.PAYPAL_SECRET;
+  private readonly apiUrl = process.env.PAYPAL_API;
+
+  async generateAccessToken(): Promise<string> {
+    const auth = Buffer.from(`${this.clientId}:${this.secret}`).toString(
+      'base64',
+    );
+
+    try {
+      const response = await axios.post(
+        `${this.apiUrl}/v1/oauth2/token`,
+        'grant_type=client_credentials',
+        {
+          headers: {
+            Authorization: `Bearer ${auth}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        },
+      );
+
+      return response.data.data.access_token;
+    } catch (error) {
+      throw new HttpException(
+        'Unable to fetch PayPal token',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
-  findAll() {
-    return `This action returns all payments`;
+  async captureOrder(orderId: string): Promise<string> {
+    const accessToken = await this.generateAccessToken();
+    try {
+      const response = await axios.post(
+        `${this.apiUrl}/v2/checkout/orders/${orderId}/capture`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        },
+      );
+
+      return response.data;
+    } catch (error) {
+      throw new HttpException(
+        error.response?.data || 'Error capturing PayPal order',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} payment`;
-  }
-
-  update(id: number, updatePaymentDto: UpdatePaymentDto) {
-    return `This action updates a #${id} payment`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} payment`;
+  async getOrderDetails(orderId: string): Promise<any> {
+    const accessToken = await this.generateAccessToken();
+    try {
+      const response = await axios.get(
+        `${this.apiUrl}/v2/checkout/orders/${orderId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        },
+      );
+    } catch (error) {
+      throw new HttpException(
+        error.response?.data || 'Error capturing PayPal order',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }

@@ -35,6 +35,7 @@
     "@nestjs/websockets": "^11.0.8",
     "@prisma/client": "^6.4.1",
     "argon2": "^0.41.1",
+    "axios": "^1.8.4",
     "cache-manager": "^6.4.0",
     "cache-manager-ioredis-yet": "^2.1.2",
     "class-transform": "^0.7.0",
