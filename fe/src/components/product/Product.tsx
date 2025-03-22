@@ -9,7 +9,7 @@ import { useProductData } from "../../hooks";
 export default function Product() {
   const [viewState, setViewState] = useState<"filter" | "search" | "">("");
   const [activeCategory, setActiveCategory] = useState<string>("");
-  const { products } = useProductData();
+  const { productData } = useProductData();
   const navigate = useNavigate();
 
   const handleViewState = (state: "filter" | "search") => {
@@ -125,7 +125,7 @@ export default function Product() {
 
       {/* Product Grid */}
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 cursor-pointer">
-        {products.map((item) => (
+        {productData.map((item) => (
           <div
             key={item.id}
             className="group relative bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300"

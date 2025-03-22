@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
 import { product } from "../interfaces";
 import { productService } from "../services/productService";
 import toast from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
 
 export const useProductData = () => {
-  const [products, setProducts] = useState<product[]>([]);
-  const fetchProducts = async () => {
+  /** Fetch products data from the API */
+  const fetchProducts = async (): Promise<product[]> => {
     try {
       const response = await productService.findAll();
-      const productList: product[] = response.data.data.map((item: any) => ({
+      return response.data.data.map((item: any) => ({
         id: item.id,
         name: item.name,
         desc: item.description,
@@ -16,16 +16,18 @@ export const useProductData = () => {
         stock: item.stock,
         imagePath: JSON.parse(item.imagePath),
       }));
-
-      setProducts(productList);
     } catch (error: unknown) {
-      toast.error(`Error while fetching ${error}`);
+      toast.error(`Error while fetching products: ${String(error)}`);
+      throw error;
     }
   };
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+  const { data: productData = [], isLoading, error, refetch } = useQuery<product[], Error>({
+    queryKey: ["products"],
+    queryFn: fetchProducts,
+    retry: 2, 
+    refetchOnWindowFocus: false,
+  });
 
-  return { products };
+  return { productData, isLoading, error, refetch };
 };

@@ -1,13 +1,10 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { CartDetails } from "../interfaces/cart";
 import { useAuthStore } from "../store/useAuthStore";
 import { cartService } from "../services/cartService";
 import toast from "react-hot-toast";
 
 export default function useCartData() {
-  const [loading, setLoading] = useState(true);
-  const [cart, setCart] = useState<CartDetails[]>([]);
-  const [error, setError] = useState("");
   const { isAuthenticated } = useAuthStore();
 
   /** Transforms API response or local storage data into CartDetails format */
@@ -30,19 +27,20 @@ export default function useCartData() {
           ? JSON.parse(item.product.imagePath)
           : [],
       },
-      user: {
-        id: item.user.id ?? "",
-        firstName: item.user.firstName ?? "",
-        lastName: item.user.lastName ?? "",
-        email: item.user.email ?? "",
-        username: item.user.username ?? "",
-      },
+      user: item.user
+        ? {
+            id: item.user.id ?? "",
+            firstName: item.user.firstName ?? "",
+            lastName: item.user.lastName ?? "",
+            email: item.user.email ?? "",
+            username: item.user.username ?? "",
+          }
+        : undefined,
     }));
   };
 
   /** Fetches cart data from API or local storage */
-  const fetchCartData = async () => {
-    setLoading(true);
+  const fetchCartData = async (): Promise<CartDetails[]> => {
     try {
       let cartData = [];
 
@@ -53,27 +51,25 @@ export default function useCartData() {
         }
         cartData = response.data.data;
       } else {
-        try {
-          const localCart = localStorage.getItem("cart");
-          cartData = localCart ? JSON.parse(localCart) : [];
-        } catch (storageError) {
-          toast.error(String(storageError));
-          cartData = [];
-        }
+        const localCart = localStorage.getItem("cart");
+        cartData = localCart ? JSON.parse(localCart) : [];
       }
 
-      setCart(transformCartData(cartData));
-      console.log(transformCartData(cartData))
-    } catch (err) {
-      console.error("Error fetching cart data:", err);
-      setError("Failed to load cart data. Please try again.");
-    } finally {
-      setLoading(false);
+      return transformCartData(cartData);
+    } catch (error) {
+      toast.error("Failed to load cart data. Please try again.");
+      throw error;
     }
   };
 
-  useEffect(() => {
-    fetchCartData();
-  }, [isAuthenticated]);
-  return { cart, setCart, loading, error, transformCartData, fetchCartData };
+  /** Using useQuery for data fetching */
+  const { data: cart = [], isLoading, error, refetch } = useQuery<CartDetails[], Error>({
+    queryKey: ["cartData", isAuthenticated],
+    queryFn: fetchCartData,
+    enabled: typeof isAuthenticated === "boolean",
+    retry: 2,
+    refetchOnWindowFocus: true
+  });
+
+  return { cart, isLoading, error, refetch, transformCartData };
 }

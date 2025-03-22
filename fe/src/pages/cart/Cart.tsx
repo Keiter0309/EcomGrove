@@ -7,7 +7,7 @@ import useCartData from "../../hooks/useCartData";
 import { Link } from "react-router-dom";
 
 export default function Cart({ onClose }: { onClose: () => void }) {
-  const { cart, loading, error, setCart, transformCartData, fetchCartData } =
+  const { cart, isLoading, error, setCart, transformCartData, refetch } =
     useCartData();
   const { isAuthenticated } = useAuthStore();
 
@@ -18,7 +18,7 @@ export default function Cart({ onClose }: { onClose: () => void }) {
         const response = await cartService.removeItem(id);
         if (response.status === 200) {
           toast.success("Deleted item successfully");
-          fetchCartData();
+          refetch();
         }
       } else {
         const localCart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -62,9 +62,9 @@ export default function Cart({ onClose }: { onClose: () => void }) {
           </button>
         </div>
 
-        {/* Loading & Error Handling */}
-        {loading ? (
-          <p className="text-center">Loading...</p>
+        {/* isLoading & Error Handling */}
+        {isLoading ? (
+          <p className="text-center">isLoading...</p>
         ) : error ? (
           <p className="text-red-500 text-center">{error}</p>
         ) : cart.length > 0 ? (
